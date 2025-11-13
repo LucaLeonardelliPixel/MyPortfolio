@@ -1,0 +1,23 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"button_label": {
+				"__TYPE__": "FieldContent",
+				"value": "finest",
+				"type": "Text"
+			},
+			"button_link": {
+				"__TYPE__": "LinkContent",
+				"key": "6d3378e1-95fb-4150-978d-b6e39aac45ed",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "https://slicemachine.dev",
+					"text": "night"
+				}
+			}
+		},
+		"items": []
+	}
+]
