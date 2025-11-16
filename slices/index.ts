@@ -10,6 +10,7 @@ export const components = {
   hero: dynamic(() => import("./Hero")),
   image_block: dynamic(() => import("./ImageBlock")),
   link_project: dynamic(() => import("./LinkProject")),
+  new_hero: dynamic(() => import("./NewHero")),
   tech_list: dynamic(() => import("./TechList")),
   text_block: dynamic(() => import("./TextBlock")),
 };

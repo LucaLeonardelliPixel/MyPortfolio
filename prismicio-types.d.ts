@@ -232,7 +232,7 @@ export type ContactDocument<Lang extends string = string> =
     Lang
   >;
 
-type HomepageDocumentDataSlicesSlice = HeroSlice;
+type HomepageDocumentDataSlicesSlice = NewHeroSlice | HeroSlice;
 
 /**
  * Content for Homepage documents
@@ -1121,6 +1121,81 @@ export type LinkProjectSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *NewHero → Default → Primary*
+ */
+export interface NewHeroSliceDefaultPrimary {
+  /**
+   * Heading field in *NewHero → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: new_hero.default.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  heading: prismic.KeyTextField;
+
+  /**
+   * First Name field in *NewHero → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: new_hero.default.primary.first_name
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  first_name: prismic.KeyTextField;
+
+  /**
+   * Last Name field in *NewHero → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: new_hero.default.primary.last_name
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  last_name: prismic.KeyTextField;
+
+  /**
+   * Tag Line field in *NewHero → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: new_hero.default.primary.tag_line
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  tag_line: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for NewHero Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type NewHeroSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<NewHeroSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *NewHero*
+ */
+type NewHeroSliceVariation = NewHeroSliceDefault;
+
+/**
+ * NewHero Shared Slice
+ *
+ * - **API ID**: `new_hero`
+ * - **Description**: NewHero
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type NewHeroSlice = prismic.SharedSlice<
+  "new_hero",
+  NewHeroSliceVariation
+>;
+
+/**
  * Item in *TechList → Default → Primary → Techs*
  */
 export interface TechListSliceDefaultPrimaryTechsItem {
@@ -1313,6 +1388,10 @@ declare module "@prismicio/client" {
       LinkProjectSliceDefaultPrimary,
       LinkProjectSliceVariation,
       LinkProjectSliceDefault,
+      NewHeroSlice,
+      NewHeroSliceDefaultPrimary,
+      NewHeroSliceVariation,
+      NewHeroSliceDefault,
       TechListSlice,
       TechListSliceDefaultPrimaryTechsItem,
       TechListSliceDefaultPrimary,

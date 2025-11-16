@@ -1,0 +1,29 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"tag_line": {
+				"__TYPE__": "FieldContent",
+				"value": "number",
+				"type": "Text"
+			},
+			"heading": {
+				"__TYPE__": "FieldContent",
+				"value": "ear",
+				"type": "Text"
+			},
+			"first_name": {
+				"__TYPE__": "FieldContent",
+				"value": "original",
+				"type": "Text"
+			},
+			"last_name": {
+				"__TYPE__": "FieldContent",
+				"value": "sport",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]
