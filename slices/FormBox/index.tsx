@@ -34,7 +34,7 @@ const FormBox: FC<FormBoxProps> = ({ slice }) => {
       <div className="mx-auto max-w-2xl px-4">
         
         <div className="text-center mb-10">
-          <h1 className="font-bold leading-tight tracking-tight  text-slate-300 text-6xl md:text-9xl">
+          <h1 className="font-bold md:mb-0 mb-5 leading-tight tracking-tight  text-slate-300 text-5xl md:text-9xl">
             <PrismicRichText field={slice.primary.heading} />
           </h1>
   

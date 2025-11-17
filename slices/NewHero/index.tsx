@@ -99,7 +99,7 @@ const NewHero: FC<NewHeroProps> = ({ slice }) => {
           </span>
           
           {/* 2 & 3. FIRST NAME & LAST NAME */}
-          <h1 className="mb-8 text-7xl md:text-[10rem] font-extrabold leading-none tracking-tighter" 
+          <h1 className="mb-8 text-5xl md:text-[10rem] font-extrabold leading-none tracking-tighter" 
               aria-label={slice.primary.first_name + " " + slice.primary.last_name}>
             
             {/* FIRST NAME: block su mobile, md:inline su desktop */}
@@ -114,7 +114,7 @@ const NewHero: FC<NewHeroProps> = ({ slice }) => {
           </h1>
           
           {/* 4. TAG_LINE */}
-          <span className="job-title block bg-gradient-to-tr from-yellow-500 via-yellow-200 to-yellow-500 bg-clip-text text-2xl font-bold uppercase tracking-[0.2rem] text-transparent md:text-4xl">
+          <span className="job-title block bg-gradient-to-tr from-yellow-500 via-yellow-200 to-yellow-500 bg-clip-text text-xl font-bold uppercase tracking-[0.2rem] text-transparent md:text-4xl">
             {slice.primary.tag_line}
           </span>
           
