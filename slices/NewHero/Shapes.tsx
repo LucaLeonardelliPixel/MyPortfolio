@@ -48,7 +48,8 @@ export default function Shapes() {
 // --- PAVIMENTO INVISIBILE DINAMICO ---
 function Floor() {
   const { viewport } = useThree();
-  // Posiziona il pavimento al bordo inferiore esatto del viewport
+  // 🛑 CORREZIONE: Posiziona il pavimento al bordo inferiore esatto del viewport
+  // (Il tuo / 4 lo metteva troppo in alto)
   const yPosition = -viewport.height / 4;
 
   return (
@@ -81,12 +82,17 @@ function Walls() {
 
 // --- GEOMETRIE ---
 function Geometries() {
+  // ✅ USA useThree per ottenere la larghezza dello schermo in pixel
+  const { size } = useThree();
+  // Definiamo "mobile" come qualsiasi schermo più piccolo di 768px (breakpoint 'md' di Tailwind)
+  const isMobile = size.width < 768;
+
   const geometries = useMemo(() => [
-    new THREE.IcosahedronGeometry(1.5), // Gem (Scala ridotta)
-    new THREE.CapsuleGeometry(0.5, 1.0, 2, 16), // Pill (Scala ridotta)
-    new THREE.DodecahedronGeometry(1.0), // Soccer ball (Scala ridotta)
+    new THREE.IcosahedronGeometry(1.5), // Gem
+    new THREE.CapsuleGeometry(0.5, 1.0, 2, 16), // Pill
+    new THREE.DodecahedronGeometry(1.0), // Soccer ball
     new THREE.TorusGeometry(0.6, 0.25, 16, 32), // Donut
-    new THREE.OctahedronGeometry(1.0), // Diamond (Scala ridotta)
+    new THREE.OctahedronGeometry(1.0), // Diamond
   ], []);
 
   const materials = useMemo(() => [
@@ -98,7 +104,11 @@ function Geometries() {
   ], []);
 
   const shapes = useMemo(() => {
-    return Array.from({ length: 20 }, () => ({
+    // ✅ Logica responsive
+    const count = isMobile ? 10 : 17; // Meno forme su mobile
+    const scaleRange = isMobile ? [0.2, 0.4] : [0.4, 0.6]; // Scala più piccola su mobile
+
+    return Array.from({ length: count }, () => ({ // Usa 'count'
       geometry: gsap.utils.random(geometries),
       material: gsap.utils.random(materials),
       position: [
@@ -106,9 +116,9 @@ function Geometries() {
         gsap.utils.random(10, 20), // Y (Sopra lo schermo)
         0, // <-- FORZA Z=0 (Nessuna profondità)
       ] as [number, number, number],
-      scale: gsap.utils.random(0.4, 0.6),
+      scale: gsap.utils.random(scaleRange[0], scaleRange[1]), // Usa 'scaleRange'
     }));
-  }, [geometries, materials]);
+  }, [isMobile, geometries, materials]); // ✅ Aggiungi 'isMobile' alle dipendenze
 
   return (
     <>

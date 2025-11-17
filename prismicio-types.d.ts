@@ -167,7 +167,7 @@ export type BlogPostDocument<Lang extends string = string> =
     Lang
   >;
 
-type ContactDocumentDataSlicesSlice = FormSlice;
+type ContactDocumentDataSlicesSlice = FormBoxSlice;
 
 /**
  * Content for Contact documents
@@ -926,31 +926,59 @@ export type ExperienceSlice = prismic.SharedSlice<
 >;
 
 /**
- * Default variation for Form Slice
+ * Primary content in *FormBox → Default → Primary*
+ */
+export interface FormBoxSliceDefaultPrimary {
+  /**
+   * Heading field in *FormBox → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: form_box.default.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  heading: prismic.RichTextField;
+
+  /**
+   *  Description field in *FormBox → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: form_box.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+}
+
+/**
+ * Default variation for FormBox Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
  * - **Documentation**: https://prismic.io/docs/slices
  */
-export type FormSliceDefault = prismic.SharedSliceVariation<
+export type FormBoxSliceDefault = prismic.SharedSliceVariation<
   "default",
-  Record<string, never>,
+  Simplify<FormBoxSliceDefaultPrimary>,
   never
 >;
 
 /**
- * Slice variation for *Form*
+ * Slice variation for *FormBox*
  */
-type FormSliceVariation = FormSliceDefault;
+type FormBoxSliceVariation = FormBoxSliceDefault;
 
 /**
- * Form Shared Slice
+ * FormBox Shared Slice
  *
- * - **API ID**: `form`
- * - **Description**: Form
+ * - **API ID**: `form_box`
+ * - **Description**: FormBox
  * - **Documentation**: https://prismic.io/docs/slices
  */
-export type FormSlice = prismic.SharedSlice<"form", FormSliceVariation>;
+export type FormBoxSlice = prismic.SharedSlice<
+  "form_box",
+  FormBoxSliceVariation
+>;
 
 /**
  * Primary content in *Hero → Default → Primary*
@@ -1373,9 +1401,10 @@ declare module "@prismicio/client" {
       ExperienceSliceDefaultPrimary,
       ExperienceSliceVariation,
       ExperienceSliceDefault,
-      FormSlice,
-      FormSliceVariation,
-      FormSliceDefault,
+      FormBoxSlice,
+      FormBoxSliceDefaultPrimary,
+      FormBoxSliceVariation,
+      FormBoxSliceDefault,
       HeroSlice,
       HeroSliceDefaultPrimary,
       HeroSliceVariation,
