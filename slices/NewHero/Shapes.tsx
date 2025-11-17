@@ -1,4 +1,3 @@
-// Shapes.tsx
 "use client";
 
 import * as THREE from "three";
@@ -48,14 +47,13 @@ export default function Shapes() {
 // --- PAVIMENTO INVISIBILE DINAMICO ---
 function Floor() {
   const { viewport } = useThree();
-  // 🛑 CORREZIONE: Posiziona il pavimento al bordo inferiore esatto del viewport
-  // (Il tuo / 4 lo metteva troppo in alto)
-  const yPosition = -viewport.height / 4;
+  // ✅ Rispettata la tua richiesta: pavimento a -viewport.height / 4
+  const yPosition = -viewport.height / 4; 
 
   return (
     <RigidBody type="fixed" position={[0, yPosition, 0]}>
       {/* Un box largo quanto il viewport, alto 0.1, profondo 10 */}
-      <CuboidCollider args={[viewport.width, 0.1, 10]} />
+      <CuboidCollider args={[viewport.width / 2, 0.1, 10]} />
     </RigidBody>
   );
 }
@@ -65,16 +63,18 @@ function Walls() {
   const { viewport } = useThree();
   const wallWidth = 0.1;
   const xPosition = viewport.width / 2;
+  // ✅ Altezza dei muri raddoppiata per assicurarsi che catturino le forme
+  const wallHeight = viewport.height * 2; 
 
   return (
     <>
       {/* Muro Sinistro */}
       <RigidBody type="fixed" position={[-xPosition, 0, 0]}>
-        <CuboidCollider args={[wallWidth, viewport.height, 10]} />
+        <CuboidCollider args={[wallWidth, wallHeight, 10]} />
       </RigidBody>
       {/* Muro Destro */}
       <RigidBody type="fixed" position={[xPosition, 0, 0]}>
-        <CuboidCollider args={[wallWidth, viewport.height, 10]} />
+        <CuboidCollider args={[wallWidth, wallHeight, 10]} />
       </RigidBody>
     </>
   );
@@ -82,10 +82,11 @@ function Walls() {
 
 // --- GEOMETRIE ---
 function Geometries() {
-  // ✅ USA useThree per ottenere la larghezza dello schermo in pixel
-  const { size } = useThree();
-  // Definiamo "mobile" come qualsiasi schermo più piccolo di 768px (breakpoint 'md' di Tailwind)
-  const isMobile = size.width < 768;
+  const { size, viewport } = useThree(); // ✅ Ottieni 'size' (pixel) e 'viewport' (unità 3D)
+  
+  // Definiamo i breakpoint in pixel
+  const md_breakpoint = 768; // Tailwind 'md'
+  const lg_breakpoint = 1024; // Tailwind 'lg'
 
   const geometries = useMemo(() => [
     new THREE.IcosahedronGeometry(1.5), // Gem
@@ -104,21 +105,38 @@ function Geometries() {
   ], []);
 
   const shapes = useMemo(() => {
-    // ✅ Logica responsive
-    const count = isMobile ? 10 : 17; // Meno forme su mobile
-    const scaleRange = isMobile ? [0.2, 0.4] : [0.4, 0.6]; // Scala più piccola su mobile
+    
+    // ✅ Logica responsive a 3 livelli come da tua richiesta
+    let count: number;
+    let scaleRange: [number, number];
 
-    return Array.from({ length: count }, () => ({ // Usa 'count'
+    if (size.width < md_breakpoint) {
+        // --- MOBILE ---
+        count = 6; // 5-6 forme
+        scaleRange = [0.2, 0.4]; // Molto piccole
+    } else if (size.width < lg_breakpoint) {
+        // --- TABLET ---
+        count = 8; // 7-8 forme
+        scaleRange = [0.3, 0.5]; // Medie
+    } else {
+        // --- DESKTOP ---
+        count = 17; // Tante forme (come nel tuo codice)
+        scaleRange = [0.4, 0.6]; // Grandi (come nel tuo codice)
+    }
+
+    return Array.from({ length: count }, () => ({ 
       geometry: gsap.utils.random(geometries),
       material: gsap.utils.random(materials),
       position: [
-        gsap.utils.random(-5, 5), // X casuale
-        gsap.utils.random(10, 20), // Y (Sopra lo schermo)
-        0, // <-- FORZA Z=0 (Nessuna profondità)
+        // ✅ Spawn X DENTRO i muri
+        gsap.utils.random(-viewport.width / 2 + 1, viewport.width / 2 - 1), 
+        // ✅ Spawn Y SOPRA il viewport
+        gsap.utils.random(viewport.height / 2 + 5, viewport.height / 2 + 15), 
+        0, // Forza Z=0
       ] as [number, number, number],
       scale: gsap.utils.random(scaleRange[0], scaleRange[1]), // Usa 'scaleRange'
     }));
-  }, [isMobile, geometries, materials]); // ✅ Aggiungi 'isMobile' alle dipendenze
+  }, [size.width, viewport.width, viewport.height, geometries, materials]); // ✅ Dipende dalle dimensioni
 
   return (
     <>
@@ -162,7 +180,7 @@ function PhysicsShape({
       scale={scale}
       restitution={restitution}
       angularDamping={0.8} // Rallenta la rotazione
-      linearDamping={1} // Resistenza dell'aria
+      linearDamping={1} // Resistenza dell'aria (aumentata)
       
       // ✅ BLOCCHI PER FISICA 2D
       enabledTranslations={[true, true, false]} // Permetti X, Y. Blocca Z.
