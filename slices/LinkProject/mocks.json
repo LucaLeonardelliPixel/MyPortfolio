@@ -9,8 +9,8 @@
 				"type": "Text"
 			},
 			"button_link": {
-				"__TYPE__": "LinkContent",
 				"key": "6d3378e1-95fb-4150-978d-b6e39aac45ed",
+				"__TYPE__": "LinkContent",
 				"value": {
 					"__TYPE__": "ExternalLink",
 					"url": "https://slicemachine.dev",

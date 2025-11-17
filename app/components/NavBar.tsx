@@ -82,11 +82,13 @@ export default function NavBar({
             </React.Fragment>
           ))}
           <li>
-            <Button
-              linkField={settings.data.cta_link}
-              label={settings.data.cta_label}
-              className="ml-3"
-            />
+            <span onClick={() => setOpen(false)}>
+              <Button
+                linkField={settings.data.cta_link}
+                label={settings.data.cta_label}
+                className="ml-3"
+              />
+            </span>
           </li>
         </div>
         <DesktopMenu settings={settings} pathname={pathname} />

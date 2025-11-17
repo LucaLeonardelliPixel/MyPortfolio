@@ -5,6 +5,8 @@ import { Content } from "@prismicio/client";
 import { PrismicRichText, PrismicText, SliceComponentProps } from "@prismicio/react";
 import Bounded from "@/app/components/Bounded";
 import Heading from "@/app/components/Heading";
+import clsx from "clsx";
+import { MdArrowOutward } from "react-icons/md";
 
 export type FormBoxProps = SliceComponentProps<Content.FormBoxSlice>;
 
@@ -108,12 +110,17 @@ const FormBox: FC<FormBoxProps> = ({ slice }) => {
           </div>
 
           {/* --- Bottone di Invio --- */}
-          <div>
+          <div className="flex justify-center mt-8">
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-yellow-500 px-3.5 py-2.5 text-center text-sm font-semibold text-slate-900 shadow-sm hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 transition-all duration-150"
+              className="group relative flex w-fit text-slate-800 items-center justify-center overflow-hidden rounded-md border-2 border-slate-900 bg-slate-50  px-4 py-2 font-bold transition-transform ease-out  hover:scale-105"
             >
-              Invia Richiesta
+              <span
+                className={"absolute inset-0 z-0 h-full translate-y-9 bg-yellow-300 transition-transform  duration-300 ease-in-out group-hover:translate-y-0"}
+              />
+              <span className="relative flex items-center justify-center gap-2">
+                Invia Richiesta {<MdArrowOutward className="inline-block" />}
+              </span>
             </button>
           </div>
         </form>
