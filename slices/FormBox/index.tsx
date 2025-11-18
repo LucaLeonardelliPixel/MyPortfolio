@@ -4,8 +4,6 @@ import { FC, useState } from "react"; // Importa useState
 import { Content } from "@prismicio/client";
 import { PrismicRichText, PrismicText, SliceComponentProps } from "@prismicio/react";
 import Bounded from "@/app/components/Bounded";
-import Heading from "@/app/components/Heading";
-import clsx from "clsx";
 import { MdArrowOutward } from "react-icons/md";
 
 export type FormBoxProps = SliceComponentProps<Content.FormBoxSlice>;
