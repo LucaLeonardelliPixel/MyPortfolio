@@ -1,40 +1,37 @@
 "use client";
 
 import * as THREE from "three";
-import { Canvas, useThree } from "@react-three/fiber"; // Importa useThree
-import { Environment } from "@react-three/drei";
-import { Suspense, useMemo, useRef } from "react";
+import { Canvas, useThree, useFrame, ThreeEvent } from "@react-three/fiber";
+// Rimosso Environment per evitare errori di rete
+// import { Environment } from "@react-three/drei"; 
+import { Suspense, useMemo, useRef, useState, useEffect } from "react";
 import {
   Physics,
   RigidBody,
   CuboidCollider,
-  type RapierRigidBody,
+  RapierRigidBody,
 } from "@react-three/rapier";
 import gsap from "gsap";
+import { Environment } from "@react-three/drei";
 
 export default function Shapes() {
   return (
-    // Il contenitore HTML rimane invariato (absolute, z-index, ecc.)
-    <div className="absolute inset-0 z-0">
+    <div className="absolute inset-0 z-0 md:touch-none pointer-events-auto">
       <Canvas
         className="z-0"
         shadows
         gl={{ antialias: true }}
         dpr={[1, 1.5]}
-        // Camera che guarda dritta (0,0,10) verso il piano Z=0
         camera={{ position: [0, 0, 10], fov: 30, near: 1, far: 40 }}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.5} />
           
-          {/* Motore fisico con gravità normale */}
+          {/* Mantengo la tua gravità standard */}
           <Physics gravity={[0, -9.81, 0]}>
             <Geometries />
-            
-            {/* Contenitori invisibili */}
             <Floor />
             <Walls />
-            
           </Physics>
 
           <Environment preset="studio" />
@@ -44,35 +41,29 @@ export default function Shapes() {
   );
 }
 
-// --- PAVIMENTO INVISIBILE DINAMICO ---
 function Floor() {
   const { viewport } = useThree();
-  // ✅ Rispettata la tua richiesta: pavimento a -viewport.height / 4
+  // Mantengo la tua modifica del pavimento
   const yPosition = -viewport.height / 4; 
 
   return (
     <RigidBody type="fixed" position={[0, yPosition, 0]}>
-      {/* Un box largo quanto il viewport, alto 0.1, profondo 10 */}
-      <CuboidCollider args={[viewport.width / 2, 0.1, 10]} />
+      <CuboidCollider args={[viewport.width, 0.1, 10]} />
     </RigidBody>
   );
 }
 
-// --- MURI LATERALI INVISIBILI ---
 function Walls() {
   const { viewport } = useThree();
   const wallWidth = 0.1;
   const xPosition = viewport.width / 2;
-  // ✅ Altezza dei muri raddoppiata per assicurarsi che catturino le forme
   const wallHeight = viewport.height * 2; 
 
   return (
     <>
-      {/* Muro Sinistro */}
       <RigidBody type="fixed" position={[-xPosition, 0, 0]}>
         <CuboidCollider args={[wallWidth, wallHeight, 10]} />
       </RigidBody>
-      {/* Muro Destro */}
       <RigidBody type="fixed" position={[xPosition, 0, 0]}>
         <CuboidCollider args={[wallWidth, wallHeight, 10]} />
       </RigidBody>
@@ -80,20 +71,27 @@ function Walls() {
   );
 }
 
-// --- GEOMETRIE ---
+// Struttura dati per le forme
+type ShapeData = {
+    id: number;
+    geometry: THREE.BufferGeometry;
+    material: THREE.Material;
+    position: [number, number, number];
+    scale: number;
+};
+
 function Geometries() {
-  const { size, viewport } = useThree(); // ✅ Ottieni 'size' (pixel) e 'viewport' (unità 3D)
+  const { size, viewport } = useThree(); 
   
-  // Definiamo i breakpoint in pixel
-  const md_breakpoint = 768; // Tailwind 'md'
-  const lg_breakpoint = 1024; // Tailwind 'lg'
+  const md_breakpoint = 768;
+  const lg_breakpoint = 1024;
 
   const geometries = useMemo(() => [
-    new THREE.IcosahedronGeometry(1.5), // Gem
-    new THREE.CapsuleGeometry(0.5, 1.0, 2, 16), // Pill
-    new THREE.DodecahedronGeometry(1.0), // Soccer ball
-    new THREE.TorusGeometry(0.6, 0.25, 16, 32), // Donut
-    new THREE.OctahedronGeometry(1.0), // Diamond
+    new THREE.IcosahedronGeometry(1.5), 
+    new THREE.CapsuleGeometry(0.5, 1.0, 2, 16),
+    new THREE.DodecahedronGeometry(1.0),
+    new THREE.TorusGeometry(0.6, 0.25, 16, 32), 
+    new THREE.OctahedronGeometry(1.0), 
   ], []);
 
   const materials = useMemo(() => [
@@ -104,45 +102,80 @@ function Geometries() {
     new THREE.MeshStandardMaterial({ color: 0x2980b9, roughness: 0, metalness: 0.5, opacity: 0.8, transparent: true }),
   ], []);
 
-  const shapes = useMemo(() => {
-    
-    // ✅ Logica responsive a 3 livelli come da tua richiesta
+  const [shapes, setShapes] = useState<ShapeData[]>([]);
+  const nextIdRef = useRef(0);
+
+  const createShape = (isNewSpawn: boolean, scaleRange: [number, number]): ShapeData => {
+      nextIdRef.current += 1;
+      
+      return {
+        id: nextIdRef.current,
+        geometry: gsap.utils.random(geometries),
+        material: gsap.utils.random(materials),
+        position: [
+            // X casuale
+            gsap.utils.random(-viewport.width / 2 + 1, viewport.width / 2 - 1), 
+            // Y: 🛑 CORREZIONE QUI PER L'ANIMAZIONE INIZIALE
+            // Se è newSpawn (timer), cade da appena sopra (+5).
+            // Se è l'init (false), le distribuiamo MOLTO in alto (fino a +20) così ci mettono un po' ad arrivare.
+            isNewSpawn 
+                ? viewport.height / 2 + 5 
+                : gsap.utils.random(viewport.height / 2 + 2, viewport.height / 2 + 15), 
+            0, 
+        ] as [number, number, number],
+        scale: gsap.utils.random(scaleRange[0], scaleRange[1]),
+      };
+  };
+
+  useEffect(() => {
     let count: number;
     let scaleRange: [number, number];
 
     if (size.width < md_breakpoint) {
-        // --- MOBILE ---
-        count = 6; // 5-6 forme
-        scaleRange = [0.2, 0.4]; // Molto piccole
+        count = 6; 
+        scaleRange = [0.2, 0.4]; 
     } else if (size.width < lg_breakpoint) {
-        // --- TABLET ---
-        count = 8; // 7-8 forme
-        scaleRange = [0.3, 0.5]; // Medie
+        count = 8;
+        scaleRange = [0.3, 0.5]; 
     } else {
-        // --- DESKTOP ---
-        count = 17; // Tante forme (come nel tuo codice)
-        scaleRange = [0.4, 0.6]; // Grandi (come nel tuo codice)
+        count = 17; 
+        scaleRange = [0.4, 0.6]; 
     }
 
-    return Array.from({ length: count }, () => ({ 
-      geometry: gsap.utils.random(geometries),
-      material: gsap.utils.random(materials),
-      position: [
-        // ✅ Spawn X DENTRO i muri
-        gsap.utils.random(-viewport.width / 2 + 1, viewport.width / 2 - 1), 
-        // ✅ Spawn Y SOPRA il viewport
-        gsap.utils.random(viewport.height / 2 + 5, viewport.height / 2 + 15), 
-        0, // Forza Z=0
-      ] as [number, number, number],
-      scale: gsap.utils.random(scaleRange[0], scaleRange[1]), // Usa 'scaleRange'
-    }));
-  }, [size.width, viewport.width, viewport.height, geometries, materials]); // ✅ Dipende dalle dimensioni
+    // ---------------------------------------------------
+    // 🛑 MODIFICA: Ritardo iniziale configurabile
+    // ---------------------------------------------------
+    const START_DELAY = 3000; // ms (1.5 secondi di ritardo)
+
+    const timeout = setTimeout(() => {
+        const initialShapes = Array.from({ length: count }, () => createShape(false, scaleRange));
+        setShapes(initialShapes);
+    }, START_DELAY);
+
+    // Ciclo Infinito ogni 5 secondi
+    const interval = setInterval(() => {
+        setShapes((prevShapes) => {
+             // Se non ci sono ancora forme (stiamo aspettando il delay), non fare nulla
+             if (prevShapes.length === 0) return prevShapes;
+
+             const newShapes = [...prevShapes];
+             newShapes.shift();
+             newShapes.push(createShape(true, scaleRange));
+             return newShapes;
+        });
+    }, 5000); 
+
+    return () => {
+        clearTimeout(timeout);
+        clearInterval(interval);
+    };
+  }, [size.width, viewport.width, viewport.height]);
 
   return (
     <>
-      {shapes.map((shape, index) => (
+      {shapes.map((shape) => (
         <PhysicsShape
-          key={index}
+          key={shape.id} 
           geometry={shape.geometry}
           material={shape.material}
           position={shape.position}
@@ -153,7 +186,6 @@ function Geometries() {
   );
 }
 
-// --- PROPS PER PHYSICSSHARE (con tipi) ---
 type PhysicsShapeProps = {
   geometry: THREE.BufferGeometry;
   material: THREE.Material;
@@ -161,7 +193,6 @@ type PhysicsShapeProps = {
   scale: number;
 };
 
-// --- COMPONENTE FISICO (con blocchi Z) ---
 function PhysicsShape({
   geometry,
   material,
@@ -170,23 +201,81 @@ function PhysicsShape({
 }: PhysicsShapeProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const bodyRef = useRef<RapierRigidBody>(null!);
-  const restitution = 0.3; // Rimbalzo leggero
+  const [isDragging, setIsDragging] = useState(false);
+  const { viewport, size } = useThree(); 
+  const isDesktop = size.width >= 768;
+
+  useFrame(({ pointer }) => {
+    if (isDesktop && isDragging && bodyRef.current) {
+      const x = (pointer.x * viewport.width) / 2;
+      const y = (pointer.y * viewport.height) / 2;
+      bodyRef.current.setNextKinematicTranslation({ x, y, z: 0 });
+    }
+  });
+
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (!isDesktop) return;
+    
+    e.stopPropagation();
+    const target = e.nativeEvent.target as HTMLElement;
+    if (target && target.setPointerCapture) {
+       try {
+         target.setPointerCapture(e.pointerId);
+       } catch (err) {}
+    }
+
+    document.body.style.cursor = "grabbing";
+    
+    // 2 = KinematicPosition
+    bodyRef.current?.setBodyType(2 as any, true);
+    bodyRef.current?.wakeUp();
+    
+    setIsDragging(true);
+  };
+
+  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+    if (!isDesktop) return;
+
+    e.stopPropagation();
+    const target = e.nativeEvent.target as HTMLElement;
+    if (target && target.releasePointerCapture) {
+        try {
+            target.releasePointerCapture(e.pointerId);
+        } catch (err) {}
+    }
+    
+    document.body.style.cursor = "auto";
+    
+    // 0 = Dynamic
+    bodyRef.current?.setBodyType(0 as any, true);
+    
+    setIsDragging(false);
+  };
+
+  const restitution = 0.4; 
 
   return (
     <RigidBody
       ref={bodyRef}
-      colliders="hull" // Hitbox precisa
+      colliders="hull" 
       position={position}
       scale={scale}
       restitution={restitution}
-      angularDamping={0.8} // Rallenta la rotazione
-      linearDamping={1} // Resistenza dell'aria (aumentata)
-      
-      // ✅ BLOCCHI PER FISICA 2D
-      enabledTranslations={[true, true, false]} // Permetti X, Y. Blocca Z.
-      enabledRotations={[false, false, true]} // Permetti solo rotazione Z (come un foglio di carta).
+      angularDamping={0.8} 
+      linearDamping={1} 
+      enabledTranslations={[true, true, false]} 
+      enabledRotations={[false, false, true]} 
     >
-      <mesh ref={meshRef} geometry={geometry} material={material} castShadow />
+      <mesh 
+        ref={meshRef} 
+        geometry={geometry} 
+        material={material} 
+        castShadow 
+        onPointerDown={isDesktop ? handlePointerDown : undefined}
+        onPointerUp={isDesktop ? handlePointerUp : undefined}
+        onPointerOver={isDesktop ? () => { if(!isDragging) document.body.style.cursor = "grab"; } : undefined}
+        onPointerOut={isDesktop ? () => { if(!isDragging) document.body.style.cursor = "auto"; } : undefined}
+      />
     </RigidBody>
   );
 }

@@ -100,11 +100,11 @@ const NewHero: FC<NewHeroProps> = ({ slice }) => {
     >
       {/* Contenitore centrato */}
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 pointer-events-none md:pointer-events-auto">
           <Shapes />
         </div>
-        <div className="text-center md:row-start-1 z-10">
-          
+
+        <div className="text-center md:row-start-1 relative z-10 pointer-events-auto md:pointer-events-none">  
           {/* 1. HEADING (Tipografia Fluida) */}
           <span className="mb-8 heading-title block bg-gradient-to-tr from-slate-500 via-slate-200 to-slate-500 bg-clip-text font-bold uppercase tracking-[0.2rem] text-transparent 
                         text-[clamp(0.875rem,2.5vw,1.5rem)]"> 
