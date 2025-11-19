@@ -362,6 +362,71 @@ interface PageDocumentData {
 export type PageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
 
+type PricingDocumentDataSlicesSlice = HeroPricingSlice;
+
+/**
+ * Content for Pricing documents
+ */
+interface PricingDocumentData {
+  /**
+   * Slice Zone field in *Pricing*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<PricingDocumentDataSlicesSlice> /**
+   * Meta Title field in *Pricing*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: pricing.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */;
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *Pricing*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: pricing.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Image field in *Pricing*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing.meta_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * Pricing document from Prismic
+ *
+ * - **API ID**: `pricing`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type PricingDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<PricingDocumentData>,
+    "pricing",
+    Lang
+  >;
+
 type ProjectDocumentDataSlicesSlice =
   | LinkProjectSlice
   | ImageBlockSlice
@@ -646,6 +711,7 @@ export type AllDocumentTypes =
   | ContactDocument
   | HomepageDocument
   | PageDocument
+  | PricingDocument
   | ProjectDocument
   | SettingsDocument;
 
@@ -1043,6 +1109,132 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<"hero", HeroSliceVariation>;
 
 /**
+ * Item in *HeroPricing → Default → Primary → Fields*
+ */
+export interface HeroPricingSliceDefaultPrimaryFieldItem {
+  /**
+   * Value field in *HeroPricing → Default → Primary → Fields*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.field[].type
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  type: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *HeroPricing → Default → Primary*
+ */
+export interface HeroPricingSliceDefaultPrimary {
+  /**
+   * Heading field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.heading
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  heading: prismic.KeyTextField;
+
+  /**
+   * Description field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * HeadingPlan field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.headingplan
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  headingplan: prismic.KeyTextField;
+
+  /**
+   * Price field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.price
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  price: prismic.KeyTextField;
+
+  /**
+   * Fields field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.field[]
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  field: prismic.GroupField<Simplify<HeroPricingSliceDefaultPrimaryFieldItem>>;
+
+  /**
+   * Button Link field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.button_link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  button_link: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Button Label field in *HeroPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_pricing.default.primary.button_label
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  button_label: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for HeroPricing Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HeroPricingSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<HeroPricingSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *HeroPricing*
+ */
+type HeroPricingSliceVariation = HeroPricingSliceDefault;
+
+/**
+ * HeroPricing Shared Slice
+ *
+ * - **API ID**: `hero_pricing`
+ * - **Description**: HeroPricing
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HeroPricingSlice = prismic.SharedSlice<
+  "hero_pricing",
+  HeroPricingSliceVariation
+>;
+
+/**
  * Primary content in *ImageBlock → Default → Primary*
  */
 export interface ImageBlockSliceDefaultPrimary {
@@ -1381,6 +1573,9 @@ declare module "@prismicio/client" {
       PageDocument,
       PageDocumentData,
       PageDocumentDataSlicesSlice,
+      PricingDocument,
+      PricingDocumentData,
+      PricingDocumentDataSlicesSlice,
       ProjectDocument,
       ProjectDocumentData,
       ProjectDocumentDataSlicesSlice,
@@ -1409,6 +1604,11 @@ declare module "@prismicio/client" {
       HeroSliceDefaultPrimary,
       HeroSliceVariation,
       HeroSliceDefault,
+      HeroPricingSlice,
+      HeroPricingSliceDefaultPrimaryFieldItem,
+      HeroPricingSliceDefaultPrimary,
+      HeroPricingSliceVariation,
+      HeroPricingSliceDefault,
       ImageBlockSlice,
       ImageBlockSliceDefaultPrimary,
       ImageBlockSliceVariation,

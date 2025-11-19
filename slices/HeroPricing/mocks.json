@@ -1,0 +1,67 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"heading": {
+				"__TYPE__": "FieldContent",
+				"value": "speak",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Lorem ad officia culpa."
+						}
+					}
+				]
+			},
+			"price": {
+				"__TYPE__": "FieldContent",
+				"value": "fear",
+				"type": "Text"
+			},
+			"field": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "regular",
+									"type": "Text"
+								}
+							]
+						]
+					}
+				]
+			},
+			"button_link": {
+				"key": "451d2ab4-dcdf-41db-9856-d951b2ca2118",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "http://google.com",
+					"text": "now"
+				}
+			},
+			"button_label": {
+				"__TYPE__": "FieldContent",
+				"value": "guide",
+				"type": "Text"
+			},
+			"headingplan": {
+				"__TYPE__": "FieldContent",
+				"value": "cause",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]
