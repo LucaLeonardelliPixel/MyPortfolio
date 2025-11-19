@@ -100,7 +100,7 @@ const NewHero: FC<NewHeroProps> = ({ slice }) => {
     >
       {/* Contenitore centrato */}
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <div className="absolute inset-0 pointer-events-none md:pointer-events-auto">
+        <div className="absolute inset-0 -z-10  md:z-0 pointer-events-none md:pointer-events-auto">
           <Shapes />
         </div>
 
