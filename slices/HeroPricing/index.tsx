@@ -32,7 +32,7 @@ const HeroPricing: FC<HeroPricingProps> = ({ slice }) => {
         </div>
         
         {/* --- COLONNA DESTRA (Card) --- */}
-        <div className="w-full max-w-md mx-auto md:ml-auto md:mr-0 rounded-3xl bg-gradient-to-tr from-yellow-500 via-yellow-400 to-yellow-200 flex flex-col shadow-2xl shadow-yellow-500/40 relative z-10 overflow-hidden">
+        <div className="w-full max-w-md mx-auto md:ml-auto md:mr-0 rounded-3xl bg-gradient-to-tr from-yellow-500 via-yellow-400 to-yellow-200 flex flex-col shadow-2xl shadow-yellow-500/40 relative z-10 overflow-hidden transition-transform duration-300 ease-in-out hover:scale-102">
           
           <div className="pt-10 pb-5 px-5">
             <h1 className="font-bold leading-tight tracking-tight text-4xl md:text-5xl uppercase text-center text-slate-900">
@@ -57,16 +57,16 @@ const HeroPricing: FC<HeroPricingProps> = ({ slice }) => {
           </div>
           
           {/* Footer della card (Bottone) - Rimane fisso in basso */}
-          <div className="pb-8 flex justify-center w-full px-10">
+          <div className="pb-8 flex justify-center w-full px-16">
             <Button 
               linkField={slice.primary.button_link} 
               label={slice.primary.button_label}
               className="w-full text-center shadow-md"
             />
           </div>
-
-        </div>
       </div>
+      
+          </div>
     </Bounded>
   );
 };
